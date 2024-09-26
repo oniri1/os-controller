@@ -7,10 +7,11 @@
   "author": "oniri1",
   "license": "MIT",
   "scripts": {
+    "nextServer": "node nextServer.js",
     "dev": "next dev",
     "build": "next build",
-    "electron": "wait-on http://localhost:3000 && electron .",
-    "start": "npm run dev & npm run electron",
+    "electron": "wait-on https://localhost:3000 && electron .",
+    "start": "npm run nextServer & npm run electron",
     "lint": "next lint"
   },
   "build": {
@@ -18,20 +19,24 @@
     "files": [
       "next.config.js",
       "main.js",
+      "nextServer.js",
       ".next/**/*",
       "node_modules/**/*"
     ]
   },
   "dependencies": {
+    "@electron/remote": "^2.1.2",
     "next": "14.2.13",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "simple-peer": "^9.11.1"
   },
   "devDependencies": {
     "@types/electron": "^1.4.38",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/simple-peer": "^9.11.8",
     "electron": "^32.1.2",
     "electron-builder": "^25.0.5",
     "eslint": "^8",
