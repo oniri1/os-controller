@@ -1,14 +1,24 @@
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, ipcMain, desktopCapturer } from "electron";
 import path from "path";
 import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
 const isDev = true;
 const url = isDev
   ? "http://localhost:3000"
   : `file://${path.join(__dirname, ".next", "server", "pages", "index.html")}`;
+
+//
+ipcMain.handle("get-sources", async (event, options) => {
+  try {
+    const sources = await desktopCapturer.getSources(options);
+    return sources;
+  } catch (error) {
+    console.error("Error getting sources:", error);
+    throw error; // 오류를 던짐
+  }
+});
 
 // Electron 창 생성 함수
 function createWindow() {
@@ -16,8 +26,8 @@ function createWindow() {
     width: 800,
     height: 600,
     webPreferences: {
-      nodeIntegration: true, // 필요 시, node 통합 여부 설정
-      contextIsolation: false,
+      contextIsolation: true,
+      enableRemoteModule: false,
     },
   });
 
