@@ -1,50 +1,56 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 const ScreenShare = () => {
   const videoElem = useRef<HTMLVideoElement>(null);
+  const startBtn = useRef<HTMLButtonElement>(null);
+  const stopBtn = useRef<HTMLButtonElement>(null);
 
-  useEffect(() => {
-    const getScreen = async () => {
-      const sources: Electron.DesktopCapturerSource[] =
-        await window.electron.getSources({
-          types: ["window", "screen"],
-        });
+  const startShare = useCallback(async () => {
+    try {
+      if (videoElem.current === null) return;
 
-      console.log(sources);
+      console.log(screen.width, screen.height);
 
-      sources.forEach(async (source) => {
-        try {
-          // 소스가 'Entire Screen'이면 스트림을 요청
-          if (source.name === "전체 화면" || source.name === "Entire Screen") {
-            const stream = await navigator.mediaDevices.getDisplayMedia({
-              video: true,
-              audio: true, // 화면 공유 시 오디오 비활성화
-            });
-
-            if (videoElem.current !== null) {
-              videoElem.current.srcObject = stream;
-            } else {
-              console.log("비디오 비었음", videoElem.current);
-            }
-          }
-        } catch (err) {
-          throw err;
-        }
+      const stream = await navigator.mediaDevices.getDisplayMedia({
+        audio: true,
+        video: {
+          width: screen.width,
+          height: screen.height,
+          frameRate: 30,
+        },
       });
-    };
 
-    getScreen();
+      videoElem.current.srcObject = stream;
+      videoElem.current.onloadedmetadata = (e) => {
+        if (videoElem.current !== null) videoElem.current.play();
+      };
+    } catch (err) {
+      console.log(err);
+    }
+  }, [videoElem.current]);
+
+  const stopShare = useCallback(async () => {
+    try {
+      if (videoElem.current !== null) videoElem.current.pause();
+    } catch (err) {
+      console.log(err);
+    }
   }, []);
 
   return (
     <div>
-      <h1>Screen Share Example</h1>
+      <button ref={startBtn} onClick={startShare}>
+        Start
+      </button>
+      <button ref={stopBtn} onClick={stopShare}>
+        Stop
+      </button>
       <video
         ref={videoElem}
         autoPlay
-        style={{ width: "100%", height: "auto" }}
+        style={{ width: "80%", height: "auto" }}
       ></video>
     </div>
   );

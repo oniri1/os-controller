@@ -1,33 +1,26 @@
-import { app, BrowserWindow, ipcMain, desktopCapturer } from "electron";
-import path from "path";
-import { fileURLToPath } from "url";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import {
+  app,
+  BrowserWindow,
+  ipcMain,
+  desktopCapturer,
+  session,
+} from "electron";
 
 function createWindow() {
-  const win = new BrowserWindow({
-    width: 800,
-    height: 600,
-    webPreferences: {
-      preload: path.join(__dirname, "preload.js"), // preload.js 파일을 사용하여 보안 설정
-      contextIsolation: true, // 보안 설정
-      enableRemoteModule: false, // 보안 설정
-    },
-  });
+  const mainWindow = new BrowserWindow();
 
-  win.loadURL("https://localhost:3000"); // Next.js 서버 URL
+  session.defaultSession.setDisplayMediaRequestHandler(
+    (request, callback) => {
+      desktopCapturer.getSources({ types: ["screen"] }).then((sources) => {
+        // Grant access to the first screen found.
+        callback({ video: sources[0], audio: "loopback" });
+      });
+    },
+    { useSystemPicker: true }
+  );
+
+  mainWindow.loadURL("http://localhost:3000"); // Next.js 서버 URL
 }
-// IPC 통신 설정
-ipcMain.handle("get-sources", async (event, options) => {
-  try {
-    const sources = await desktopCapturer.getSources(options);
-    return sources;
-  } catch (error) {
-    console.error("Error getting sources: ", error);
-    return [];
-  }
-});
 
 app.whenReady().then(createWindow);
 

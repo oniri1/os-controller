@@ -7,11 +7,10 @@
   "author": "oniri1",
   "license": "MIT",
   "scripts": {
-    "nextServer": "node nextServer.js",
     "dev": "next dev",
     "build": "next build",
-    "electron": "wait-on https://localhost:3000 && electron .",
-    "start": "npm run nextServer & npm run electron",
+    "electron": "wait-on http://localhost:3000 && electron .",
+    "start": "npm run dev & npm run electron",
     "lint": "next lint"
   },
   "build": {
@@ -19,7 +18,6 @@
     "files": [
       "next.config.js",
       "main.js",
-      "nextServer.js",
       ".next/**/*",
       "node_modules/**/*"
     ]
