@@ -1,10 +1,4 @@
-import {
-  app,
-  BrowserWindow,
-  ipcMain,
-  desktopCapturer,
-  session,
-} from "electron";
+import { app, BrowserWindow, desktopCapturer, session } from "electron";
 
 function createWindow() {
   const mainWindow = new BrowserWindow();
@@ -12,7 +6,6 @@ function createWindow() {
   session.defaultSession.setDisplayMediaRequestHandler(
     (request, callback) => {
       desktopCapturer.getSources({ types: ["screen"] }).then((sources) => {
-        // Grant access to the first screen found.
         callback({ video: sources[0], audio: "loopback" });
       });
     },

@@ -11,8 +11,6 @@ const ScreenShare = () => {
     try {
       if (videoElem.current === null) return;
 
-      console.log(screen.width, screen.height);
-
       const stream = await navigator.mediaDevices.getDisplayMedia({
         audio: true,
         video: {
