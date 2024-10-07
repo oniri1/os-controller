@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useRef } from "react";
 
 const ScreenShare = () => {
   const videoElem = useRef<HTMLVideoElement>(null);
